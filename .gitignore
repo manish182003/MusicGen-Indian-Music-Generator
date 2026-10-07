@@ -1,0 +1,23 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments & Env files
+venv/
+.env
+
+# Large raw datasets & zip files (keep metadata & src)
+data/raw/
+data/processed/
+data.zip
+
+# Large notebooks with embedded plot images
+notebooks/01_audio_basics.ipynb
+
+# Generated audio outputs
+outputs/
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/

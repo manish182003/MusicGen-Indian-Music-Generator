@@ -1,0 +1,46 @@
+{
+    "paths": {
+        "raw_dir": "data/raw",
+        "metadata_dir": "data/metadata",
+        "processed_dir": "data/processed"
+    },
+    "audio": {
+        "min_duration_seconds": 60,
+        "max_duration_seconds": 300,
+        "target_sample_rate": 32000,
+        "chunk_duration_seconds": 30,
+        "normalize_peak": 0.95
+    },
+    "split": {
+        "train_ratio": 0.80,
+        "validation_ratio": 0.10,
+        "test_ratio": 0.10,
+        "random_seed": 42
+    },
+    "captioning": {
+        "gemini_model": "gemini-2.5-flash",
+        "groq_model": "qwen/qwen3.8-27b",
+        "groq_max_completion_tokens": 700,
+        "request_delay_seconds": 1.0,
+        "enable_gemini": true,
+        "enable_groq_fallback": true
+    },
+    "acquisition": {
+        "enabled": false,
+        "tracks_per_category": 30,
+        "queries": {
+            "sitar": "indian classical sitar solo instrumental -vocal",
+            "flute": "meditative bansuri bamboo flute instrumental indian classical",
+            "sarod": "sarod instrumental fast drut gat classical indian",
+            "santoor": "kashmiri santoor instrumental acoustic traditional",
+            "tabla": "indian classical tabla instrumental percussion solo",
+            "veena": "indian classical veena instrumental solo",
+            "shehnai": "indian classical shehnai instrumental solo",
+            "bansuri": "indian classical bansuri flute instrumental",
+            "sarangi": "indian classical sarangi solo instrumental",
+            "violin": "carnatic hindustani classical violin solo instrumental",
+            "harmonium": "indian classical harmonium solo instrumental",
+            "guitar": "indian slide guitar mohan veena instrumental"
+        }
+    }
+}
