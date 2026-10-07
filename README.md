@@ -133,8 +133,8 @@ MusicGen/
 
 ### 2. Clone & Setup Environment
 ```bash
-git clone https://github.com/your-username/MusicGen-FineTuned.git
-cd MusicGen
+git clone https://github.com/manish182003/MusicGen-Indian-Music-Generator.git
+cd MusicGen-Indian-Music-Generator
 
 # Create virtual environment
 python -m venv venv
