@@ -1,3 +1,14 @@
+---
+title: Indian Music Generator (MusicGen + LoRA)
+emoji: 🎵
+colorFrom: red
+colorTo: blue
+sdk: gradio
+sdk_version: "4.44.0"
+app_file: app.py
+pinned: false
+---
+
 # MusicGen Indian Music Generation API
 
 Fine-tuned MusicGen model with LoRA adapter for generating Indian classical and instrumental music from text prompts.
@@ -9,8 +20,9 @@ Fine-tuned MusicGen model with LoRA adapter for generating Indian classical and 
 - **Fine-Tuning Notebook**: `notebooks/audio_fine_tuning.ipynb`
 - **Output Directory**: `outputs/`
 - **FastAPI Application**: `src/api/main.py`
+- **Gradio Application**: `app.py`
 
-## How to Start FastAPI Server
+## How to Start FastAPI Server Locally
 
 Start the API server using Uvicorn:
 
