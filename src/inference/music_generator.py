@@ -76,6 +76,13 @@ class MusicGenerator:
         if self.model is None:
             self.load_model()
 
+        # Dynamic CUDA check for ZeroGPU @spaces.GPU context
+        if torch.cuda.is_available() and self.model is not None:
+            current_device = str(next(self.model.parameters()).device)
+            if not current_device.startswith("cuda"):
+                self.device = "cuda"
+                self.model.to("cuda")
+
         inputs = self.processor(
             text=[prompt.strip()],
             padding=True,

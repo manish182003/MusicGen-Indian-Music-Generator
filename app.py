@@ -23,6 +23,19 @@ except Exception as patch_err:
 
 import gradio as gr
 
+try:
+    import spaces
+    USING_SPACES = True
+except ImportError:
+    USING_SPACES = False
+    class DummySpaces:
+        @staticmethod
+        def GPU(func=None, duration=None):
+            if func is None:
+                return lambda f: f
+            return func
+    spaces = DummySpaces()
+
 # Ensure project root is in sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -42,6 +55,7 @@ except Exception as e:
     print(f"Startup warning loading model: {e}")
 
 
+@spaces.GPU
 def generate_music(prompt, max_new_tokens, temperature, guidance_scale, top_k):
     """Gradio handler function for music generation."""
     if not prompt or not prompt.strip():

@@ -14,3 +14,4 @@ accelerate
 soundfile
 gradio
 gradio_client
+spaces
