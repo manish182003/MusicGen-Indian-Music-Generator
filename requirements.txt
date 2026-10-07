@@ -1,17 +1,29 @@
-numpy
-pandas
-matplotlib
-librosa
-torch
-transformers
-torchaudio
-torchvision
-resampy
-fastapi
-uvicorn
-peft
-accelerate
-soundfile
-gradio
-gradio_client
-spaces
+# Core Deep Learning & NLP
+torch>=2.0.0
+torchaudio>=2.0.0
+torchvision>=0.15.0
+transformers>=4.38.0
+peft>=0.9.0
+accelerate>=0.27.0
+
+# Audio Processing & Data Analysis
+librosa>=0.10.1
+soundfile>=0.12.1
+resampy>=0.4.3
+numpy>=1.24.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+
+# FastAPI Backend & Web Server
+fastapi>=0.109.0
+uvicorn>=0.27.0
+pydantic>=2.6.0
+httpx>=0.26.0
+
+# Gradio Interface & Hugging Face Spaces
+gradio>=5.16.0
+gradio_client>=1.0.0
+spaces>=0.19.0
+
+# Testing & Quality Assurance
+pytest>=8.0.0

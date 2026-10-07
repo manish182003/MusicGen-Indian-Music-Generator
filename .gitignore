@@ -1,23 +1,36 @@
-# Python bytecode & cache
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Environments & Env files
+# Environments
 venv/
+env/
+ENV/
 .env
 
-# Large raw datasets & zip files (keep metadata & src)
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Heavy Raw Datasets & Zip Files (Excluded from Git)
 data/raw/
 data/processed/
 data.zip
+data/*.zip
 
-# Large notebooks with embedded plot images
+# Audio Outputs generated during runtime
+outputs/
+*.wav
+
+# Jupyter & Editor Configs
+.ipynb_checkpoints/
+.vscode/
+.idea/
 notebooks/01_audio_basics.ipynb
 
-# Generated audio outputs
-outputs/
-
-# Jupyter Checkpoints
-.ipynb_checkpoints/
+# System Files
+.DS_Store
+Thumbs.db
