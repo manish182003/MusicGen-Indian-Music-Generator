@@ -12,3 +12,5 @@ uvicorn
 peft
 accelerate
 soundfile
+gradio
+gradio_client

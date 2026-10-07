@@ -2,6 +2,25 @@ import os
 import sys
 from pathlib import Path
 
+# Monkey-patch gradio_client schema parser to prevent Gradio bug with boolean schemas in get_api_info
+try:
+    import gradio_client.utils
+    _orig_get_type = gradio_client.utils.get_type
+    def safe_get_type(schema):
+        if isinstance(schema, bool):
+            return "bool"
+        return _orig_get_type(schema)
+    gradio_client.utils.get_type = safe_get_type
+
+    _orig_json_schema_to_python_type = gradio_client.utils._json_schema_to_python_type
+    def safe_json_schema_to_python_type(schema, defs=None):
+        if isinstance(schema, bool):
+            return "bool"
+        return _orig_json_schema_to_python_type(schema, defs)
+    gradio_client.utils._json_schema_to_python_type = safe_json_schema_to_python_type
+except Exception as patch_err:
+    print(f"Warning patching gradio_client: {patch_err}")
+
 import gradio as gr
 
 # Ensure project root is in sys.path
@@ -121,4 +140,5 @@ with gr.Blocks(title="Indian Music Generator (MusicGen + LoRA)") as demo:
     )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(show_api=False)
+
