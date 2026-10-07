@@ -36,6 +36,20 @@ class MusicGenerator:
         if self.model is not None:
             return
 
+        try:
+            import safetensors.torch
+            _orig_safe_load = safetensors.torch.load_file
+            def safe_load_file_cpu(filename, device="cpu"):
+                try:
+                    return _orig_safe_load(filename, device=device)
+                except Exception as err:
+                    if "CUDA" in str(err) or "cuda" in str(device):
+                        return _orig_safe_load(filename, device="cpu")
+                    raise err
+            safetensors.torch.load_file = safe_load_file_cpu
+        except Exception:
+            pass
+
         print(f"Loading processor: {self.base_model_name}")
         self.processor = AutoProcessor.from_pretrained(self.base_model_name)
 

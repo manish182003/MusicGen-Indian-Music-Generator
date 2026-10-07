@@ -21,6 +21,22 @@ try:
 except Exception as patch_err:
     print(f"Warning patching gradio_client: {patch_err}")
 
+# Monkey-patch safetensors load_file to safely fall back to device="cpu" if CUDA fails
+try:
+    import torch
+    import safetensors.torch
+    _orig_safe_load = safetensors.torch.load_file
+    def safe_load_file_cpu(filename, device="cpu"):
+        try:
+            return _orig_safe_load(filename, device=device)
+        except Exception as err:
+            if "CUDA" in str(err) or "cuda" in str(device):
+                return _orig_safe_load(filename, device="cpu")
+            raise err
+    safetensors.torch.load_file = safe_load_file_cpu
+except Exception as safe_patch_err:
+    print(f"Warning patching safetensors: {safe_patch_err}")
+
 import gradio as gr
 
 try:
