@@ -76,44 +76,52 @@ class MusicGenerator:
         if self.model is None:
             self.load_model()
 
-        # Dynamic CUDA check for ZeroGPU @spaces.GPU context
-        if torch.cuda.is_available() and self.model is not None:
-            current_device = str(next(self.model.parameters()).device)
-            if not current_device.startswith("cuda"):
-                self.device = "cuda"
+        use_gpu = torch.cuda.is_available()
+        target_device = "cuda" if use_gpu else "cpu"
+
+        try:
+            if use_gpu:
                 self.model.to("cuda")
 
-        inputs = self.processor(
-            text=[prompt.strip()],
-            padding=True,
-            return_tensors="pt",
-        ).to(self.device)
+            inputs = self.processor(
+                text=[prompt.strip()],
+                padding=True,
+                return_tensors="pt",
+            ).to(target_device)
 
-        with torch.no_grad():
-            audio_values = self.model.generate(
-                **inputs,
-                do_sample=True,
-                guidance_scale=guidance_scale,
-                temperature=temperature,
-                top_k=top_k,
-                max_new_tokens=max_new_tokens,
-            )
+            with torch.no_grad():
+                audio_values = self.model.generate(
+                    **inputs,
+                    do_sample=True,
+                    guidance_scale=guidance_scale,
+                    temperature=temperature,
+                    top_k=top_k,
+                    max_new_tokens=max_new_tokens,
+                )
 
-        sampling_rate = self.model.config.audio_encoder.sampling_rate
+            sampling_rate = self.model.config.audio_encoder.sampling_rate
 
-        out_path = Path(output_dir)
-        out_path.mkdir(parents=True, exist_ok=True)
+            out_path = Path(output_dir)
+            out_path.mkdir(parents=True, exist_ok=True)
 
-        filename = f"generated_{int(time.time())}_{uuid.uuid4().hex[:6]}.wav"
-        file_path = out_path / filename
+            filename = f"generated_{int(time.time())}_{uuid.uuid4().hex[:6]}.wav"
+            file_path = out_path / filename
 
-        waveform = audio_values[0, 0].cpu().numpy()
-        sf.write(str(file_path), waveform, sampling_rate)
+            waveform = audio_values[0, 0].cpu().numpy()
+            sf.write(str(file_path), waveform, sampling_rate)
 
-        return {
-            "status": "completed",
-            "file": str(file_path).replace("\\", "/"),
-            "filename": filename,
-            "sampling_rate": sampling_rate,
-            "duration_seconds": round(len(waveform) / sampling_rate, 2),
-        }
+            return {
+                "status": "completed",
+                "file": str(file_path).replace("\\", "/"),
+                "filename": filename,
+                "sampling_rate": sampling_rate,
+                "duration_seconds": round(len(waveform) / sampling_rate, 2),
+            }
+        finally:
+            if use_gpu and self.model is not None:
+                try:
+                    self.model.to("cpu")
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+                except Exception:
+                    pass

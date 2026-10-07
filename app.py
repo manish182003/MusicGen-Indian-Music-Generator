@@ -55,7 +55,7 @@ except Exception as e:
     print(f"Startup warning loading model: {e}")
 
 
-@spaces.GPU
+@spaces.GPU(duration=120)
 def generate_music(prompt, max_new_tokens, temperature, guidance_scale, top_k):
     """Gradio handler function for music generation."""
     if not prompt or not prompt.strip():
