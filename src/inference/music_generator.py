@@ -41,7 +41,8 @@ class MusicGenerator:
 
         print(f"Loading base model: {self.base_model_name}")
         base_model = MusicgenForConditionalGeneration.from_pretrained(
-            self.base_model_name
+            self.base_model_name,
+            device_map="cpu",
         )
 
         if self.adapter_path.exists():
@@ -49,6 +50,7 @@ class MusicGenerator:
             self.model = PeftModel.from_pretrained(
                 base_model,
                 str(self.adapter_path),
+                device_map="cpu",
             )
         else:
             print(f"Warning: Adapter path '{self.adapter_path}' not found. Using base model.")
