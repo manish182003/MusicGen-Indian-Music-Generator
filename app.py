@@ -55,22 +55,45 @@ except Exception as e:
     print(f"Startup warning loading model: {e}")
 
 
-@spaces.GPU(duration=120)
+def _generate_music_impl(prompt, max_new_tokens, temperature, guidance_scale, top_k):
+    return generator.generate(
+        prompt=prompt,
+        max_new_tokens=int(max_new_tokens),
+        temperature=float(temperature),
+        guidance_scale=float(guidance_scale),
+        top_k=int(top_k),
+        output_dir="outputs",
+    )
+
+
+if USING_SPACES:
+    try:
+        @spaces.GPU(duration=120)
+        def generate_music_gpu(prompt, max_new_tokens, temperature, guidance_scale, top_k):
+            return _generate_music_impl(prompt, max_new_tokens, temperature, guidance_scale, top_k)
+    except Exception:
+        generate_music_gpu = _generate_music_impl
+else:
+    generate_music_gpu = _generate_music_impl
+
+
 def generate_music(prompt, max_new_tokens, temperature, guidance_scale, top_k):
-    """Gradio handler function for music generation."""
+    """Gradio handler function for music generation with automatic CPU fallback."""
     if not prompt or not prompt.strip():
         raise gr.Error("Please enter a valid music prompt.")
 
     try:
-        result = generator.generate(
-            prompt=prompt,
-            max_new_tokens=int(max_new_tokens),
-            temperature=float(temperature),
-            guidance_scale=float(guidance_scale),
-            top_k=int(top_k),
-            output_dir="outputs",
-        )
-        return result["file"]
+        if USING_SPACES:
+            try:
+                res = generate_music_gpu(prompt, max_new_tokens, temperature, guidance_scale, top_k)
+                return res["file"]
+            except Exception as gpu_err:
+                print(f"ZeroGPU execution failed ({gpu_err}), falling back to CPU...")
+                res = _generate_music_impl(prompt, max_new_tokens, temperature, guidance_scale, top_k)
+                return res["file"]
+        else:
+            res = _generate_music_impl(prompt, max_new_tokens, temperature, guidance_scale, top_k)
+            return res["file"]
     except Exception as exc:
         raise gr.Error(f"Generation error: {str(exc)}")
 

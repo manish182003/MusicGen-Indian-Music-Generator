@@ -26,7 +26,7 @@ class MusicGenerator:
         if device:
             self.device = device
         else:
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+            self.device = "cpu"
 
         self.processor = None
         self.model = None
@@ -76,13 +76,21 @@ class MusicGenerator:
         if self.model is None:
             self.load_model()
 
-        use_gpu = torch.cuda.is_available()
+        use_gpu = False
+        if torch.cuda.is_available():
+            try:
+                self.model.to("cuda")
+                use_gpu = True
+            except Exception as cuda_err:
+                print(f"CUDA transfer failed ({cuda_err}), using CPU for generation.")
+                self.model.to("cpu")
+                use_gpu = False
+        else:
+            self.model.to("cpu")
+
         target_device = "cuda" if use_gpu else "cpu"
 
         try:
-            if use_gpu:
-                self.model.to("cuda")
-
             inputs = self.processor(
                 text=[prompt.strip()],
                 padding=True,
